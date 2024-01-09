@@ -1224,7 +1224,7 @@ class RSM:
             tth = theta*2
             qx = K*(np.cos(w) - np.cos(tth - w))
             qz = K*(np.sin(w) + np.sin(tth - w))
-            if RSM_ax = None:
+            if RSM_ax == None:
                 RSM_fig, RSM_ax = plt.subplots(1,1)
                 
             RSM_ax.plot(qx, qz, 'k')
