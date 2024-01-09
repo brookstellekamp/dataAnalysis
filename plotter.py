@@ -1,6 +1,6 @@
 #various plotting functions
 
-from brooks.fileIO import rigakuXRD, slacXRD, bandEng, getPanalyticalXRD
+from dataAnalysis.fileIO import rigakuXRD, slacXRD, bandEng, getPanalyticalXRD
 import matplotlib.pyplot as plt
 import matplotlib.colors as colors
 import numpy as np
