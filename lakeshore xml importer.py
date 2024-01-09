@@ -1,4 +1,4 @@
-from brooks.LakeshoreHall import TDepHall
+from dataAnalysis.LakeshoreHall import TDepHall
 
 field = 2 #Tesla
 
