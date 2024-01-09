@@ -1186,7 +1186,7 @@ class RSM:
             self.RSM_ax.scatter(*self.filmQ_r, marker='X', color='tab:green')
             self.redraw()
 
-    def plotRC(self, peak='sub', theta=None, fig=None, ax=None, RSM_ax = None, shape='voigt', numpeaks=1, plotLine=False, RSM_ax=None):
+    def plotRC(self, peak='sub', theta=None, fig=None, ax=None, RSM_ax = None, shape='voigt', numpeaks=1, plotLine=False):
         if fig == None:
             fig = plt.figure()
         if ax == None:
