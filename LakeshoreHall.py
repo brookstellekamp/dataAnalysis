@@ -1,6 +1,6 @@
 from xml.etree import ElementTree as ET
 import numpy as np
-from brooks.functions import mse, sheet_resistance
+from dataAnalysis.functions import mse, sheet_resistance
 from scipy.optimize import fsolve, leastsq
 from uncertainties import ufloat, wrap
 from uncertainties.umath import log as ulog
