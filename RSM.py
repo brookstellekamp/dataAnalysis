@@ -606,7 +606,7 @@ class RSM:
     **NOTE: Currently set up for 1 film (layer) only
     '''
 
-    def __init__(self, sub, film, hkl, chi=0, subNorm=None, filmNorm=None, RSMfig=None, RSMax=None):
+    def __init__(self, sub, film, hkl, chi=0, subNorm=None, filmNorm=None):
         if isinstance(sub, str):
             self.sub = matDB[sub]
         else:
@@ -624,17 +624,7 @@ class RSM:
         self.subQ_r = None
         self.filmQ_r = None
 
-        if RSMfig == None:
-            self.RSM_fig = plt.figure()
-        else:
-            self.RSM_fig = RSMfig
-        if RSMax == None:
-            self.RSM_ax = self.RSM_fig.gca()
-        else:
-            self.RSM_ax = RSMax
-
-        self.RC_fig = plt.figure()
-        self.RC_ax = self.RC_fig.gca()
+       
 
     def importData(self, source, format=None):
 
@@ -948,9 +938,9 @@ class RSM:
 
         
         if fig == None:
-            fig = self.RSM_fig
+            fig = plt.figure()
         if ax == None:
-            ax = self.RSM_ax
+            ax = fig.gca()
 
         if threshImin is not None:
             try:
@@ -1035,6 +1025,8 @@ class RSM:
 
         self.qx = tempQx
         self.qz = tempQz
+
+        return fig, ax
 
     def optimize(self, peakSubRange=(5, 1), peakFilmRange=(5, 1), routine='dot', threshImin=None, showMasks=False, p0_sub=None, p0_film=None, plot=False):
         '''
@@ -1194,13 +1186,11 @@ class RSM:
             self.RSM_ax.scatter(*self.filmQ_r, marker='X', color='tab:green')
             self.redraw()
 
-    def plotRC(self, peak='sub', theta=None, fig=None, ax=None, shape='voigt', numpeaks=1, plotLine=False, RSM_ax=None):
+    def plotRC(self, peak='sub', theta=None, fig=None, ax=None, RSM_ax = None, shape='voigt', numpeaks=1, plotLine=False, RSM_ax=None):
         if fig == None:
-            fig = self.RC_fig
+            fig = plt.figure()
         if ax == None:
-            ax = self.RC_ax
-        if RSM_ax == None:
-            RSM_ax = self.RSM_ax
+            ax = fig.gca()
         if self.subQ_r == None and theta == None:
             self.optimize()
         if peak == 'sub':
@@ -1234,19 +1224,12 @@ class RSM:
             tth = theta*2
             qx = K*(np.cos(w) - np.cos(tth - w))
             qz = K*(np.sin(w) + np.sin(tth - w))
+            if RSM_ax = None:
+                RSM_fig, RSM_ax = plt.subplots(1,1)
+                
             RSM_ax.plot(qx, qz, 'k')
 
-        return fwhmVal
-
-    def redraw(self):
-        self.RSM_fig.canvas.draw()
-        self.RC_fig.canvas.draw()
-
-    def reset_plots(self):
-        self.RSM_fig = plt.figure()
-        self.RSM_ax = self.RSM_fig.gca()
-        self.RC_fig = plt.figure()
-        self.RC_ax = self.RC_fig.gca()
+        return fwhmVal, fig, ax
 
     def latticeConstant(self, layer='film'):
         '''
@@ -1322,7 +1305,7 @@ class RSM:
         
         
 
-    def plot_Ideal_Points(self, peak='both'):
+    def plot_Ideal_Points(self, RSM_fig, RSM_ax, peak='both'):
 
         if self.qx[-1, -1] < 0:
             xy_sub = tuple((self.subQ[0]*-1, self.subQ[1]))
@@ -1333,18 +1316,18 @@ class RSM:
             xy_film = self.filmQ
 
         if peak == 'both':
-            self.RSM_ax.scatter(*xy_sub, marker='*', color='k')
-            self.RSM_ax.scatter(*xy_film, marker='*',
+            RSM_ax.scatter(*xy_sub, marker='*', color='k')
+            RSM_ax.scatter(*xy_film, marker='*',
                                 color='white', edgecolor='k')
 
         elif peak == 'sub':
-            self.RSM_ax.scatter(*xy_sub, marker='*', color='k')
+            RSM_ax.scatter(*xy_sub, marker='*', color='k')
         elif peak == 'film':
-            self.RSM_ax.scatter(*xy_film, marker='*',
+            RSM_ax.scatter(*xy_film, marker='*',
                                 color='white', edgecolor='k')
-        self.redraw()
+        RSM_fig.canvas.draw()
         
-    def plot_Refined_Points(self, peak='both'):
+    def plot_Refined_Points(self, RSM_fig, RSM_ax, peak='both'):
 
         if self.qx[-1, -1] < 0:
             xy_sub = tuple((self.subQ_r[0]*-1, self.subQ_r[1]))
@@ -1355,23 +1338,23 @@ class RSM:
             xy_film = self.filmQ_r
 
         if peak == 'both':
-            self.RSM_ax.scatter(*xy_sub, marker='o', color='k')
-            self.RSM_ax.scatter(*xy_film, marker='o',
+            RSM_ax.scatter(*xy_sub, marker='o', color='k')
+            RSM_ax.scatter(*xy_film, marker='o',
                                 color='white', edgecolor='k')
 
         elif peak == 'sub':
-            self.RSM_ax.scatter(*xy_sub, marker='o', color='k')
+            RSM_ax.scatter(*xy_sub, marker='o', color='k')
         elif peak == 'film':
-            self.RSM_ax.scatter(*xy_film, marker='o',
+            RSM_ax.scatter(*xy_film, marker='o',
                                 color='white', edgecolor='k')
-        self.redraw()
+        RSM_fig.canvas.draw()
         
-    def annotatePlot(self, keywords = 'all', lam=1.54059, point=None):
+    def annotatePlot(self, RSM_ax, keywords = 'all', lam=1.54059, point=None):
         if point == None:
             point=self.subQ
         acceptedKW = ['all', 'sample', 'ewald', 'rocking', 'analyzer', 'monochromator']
-        xlim = self.RSM_ax.get_xlim()
-        ylim = self.RSM_ax.get_ylim()
+        xlim = RSM_ax.get_xlim()
+        ylim = RSM_ax.get_ylim()
         r = 2*np.pi/lam
         xa = point[0]/2
         ya = point[1]/2
@@ -1401,27 +1384,27 @@ class RSM:
                 raise ValueError('Inappropriate keyword. Accepted keywords are {0:s}'.format(acceptedKW))
             if kw == 'sample':
                 ytop = (point[1]/point[0])*(xlim[1]-point[0])+point[1]
-                self.RSM_ax.plot([0,xlim[1]], [0, ytop], '--', color='gray')
+                RSM_ax.plot([0,xlim[1]], [0, ytop], '--', color='gray')
             elif (kw == 'ewald') or (kw == 'analyzer'):
                 x_ewald = np.arange(xlim[0], xlim[1], .001)
                 y_ewald = np.sqrt(r**2-(x_ewald - center[0])**2) + center[1]
-                self.RSM_ax.plot(x_ewald, y_ewald, '--', color='gray')
+                RSM_ax.plot(x_ewald, y_ewald, '--', color='gray')
             
             elif kw == 'rocking':
                 x_rocking = np.arange(xlim[0], xlim[1], .001)
                 r = np.sqrt(point[0]**2+point[1]**2)
                 y_rocking = np.sqrt(r**2-(x_rocking)**2)
-                self.RSM_ax.plot(x_rocking, y_rocking, '--', color='gray')
+                RSM_ax.plot(x_rocking, y_rocking, '--', color='gray')
             elif kw == 'monochromator':
                 x_mono = np.arange(xlim[0], xlim[1], .001)
                 slope = (point[1]-center[1])/(point[0]-center[0])
                 intercept = point[1]-slope*point[0]
                 y_mono = x_mono*slope + intercept
-                self.RSM_ax.plot(x_mono,y_mono, '--', color='gray')
+                RSM_ax.plot(x_mono,y_mono, '--', color='gray')
             elif kw == 'all':
                 self.annotatePlot(['sample', 'rocking', 'analyzer', 'monochromator'], lam=lam, point=point)
-            self.RSM_ax.set_xlim(xlim)
-            self.RSM_ax.set_ylim(ylim)
+            RSM_ax.set_xlim(xlim)
+            RSM_ax.set_ylim(ylim)
             
     def lineProfile(self, center, width, dimension='qz', fig=None, ax=None):
         if fig == None:
