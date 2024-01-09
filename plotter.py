@@ -45,7 +45,7 @@ def plotXRD(*inputs, fig=None, ax=None, xlim=None, source=None, offset=1, normal
     
     supportedFormats = ['ras', 'xrdml', 'data', 'slac', 'txt']
     source_input = source
-    plt.style.use('publication')
+    
     delta = 1
     i = 0
     z = 1
@@ -147,7 +147,7 @@ def plotBand(*filename, offset=0):
     
     offset: Energy offset for plotting successive data files, waterfall style. Defualt 0
     '''
-    plt.style.use('publication')
+    
     prop_cycle = plt.rcParams['axes.prop_cycle']
     colors = prop_cycle.by_key()['color']
     fig, ax = plt.subplots()
@@ -244,7 +244,7 @@ def XRD_peak_fit(data, plot=False, input='2Theta', source=None, report=True, ann
                 fig = plt.figure()
             if ax == None:
                 ax = fig.gca()
-            plt.style.use('publication')
+            
             
             ax.plot(x,y, 'o', markeredgecolor='grey', alpha = 0.5, markerfacecolor='none', zorder=0.3)
             ax.plot(x,out.best_fit)
@@ -306,7 +306,7 @@ def XRD_peak_fit(data, plot=False, input='2Theta', source=None, report=True, ann
                 fig = plt.figure()
             if ax == None:
                 ax = fig.gca()
-            plt.style.use('publication')
+            
             
             ax.plot(x,y, 'o', markeredgecolor='grey', alpha = 0.5, markerfacecolor='none', zorder=0.3)
             ax.plot(x,out.best_fit)
@@ -422,7 +422,7 @@ def FWHM(data, plot=False, input='degrees', source = None, report=True, annotate
                 fig = plt.figure()
             if ax == None:
                 ax = fig.gca()
-            plt.style.use('publication')
+            
             
             ax.plot(x,y, 'o', markeredgecolor='grey', alpha = 0.5, markerfacecolor='none', zorder=0.3)
             ax.plot(x,out.best_fit)
@@ -500,7 +500,7 @@ def FWHM(data, plot=False, input='degrees', source = None, report=True, annotate
                 fig = plt.figure()
             if ax == None:
                 ax = fig.gca()
-            plt.style.use('publication')
+            
             
             ax.plot(x,y,'o', markeredgecolor='grey', alpha = 0.5, markerfacecolor='none', zorder=0.3)
             ax.plot(x,out.best_fit)
@@ -567,7 +567,7 @@ def FWHM(data, plot=False, input='degrees', source = None, report=True, annotate
                 fig = plt.figure()
             if ax == None:
                 ax = fig.gca()
-            plt.style.use('publication')
+            
             
             ax.plot(x,y,'o', markeredgecolor='grey', alpha = 0.5, markerfacecolor='none', zorder=0.3)
             ax.plot(x,out.best_fit)
@@ -605,7 +605,7 @@ def plotRC(*filename, fig = None, ax = None, xlim=None, annotate=False, source=N
     if ax == None:
         ax = fig.gca()
 
-    plt.style.use('publication')
+    
     
     delta = 1
     i = 0
@@ -675,7 +675,7 @@ def plotPL(*filenames, step=.2, units='nm', normalize=False, offset=0, source='c
     import numpy as np
     from brooks.plotter import axis_eV_nm
     
-    plt.style.use('publication')
+    
     
     lam = []
     I = []
