@@ -11,7 +11,7 @@ from scipy.optimize import least_squares, root
 from scipy import linalg
 from uncertainties import ufloat
 from dataAnalysis.matDB import *
-from tol_colors import tol_cmap
+from dataAnalysis.tol_colors import tol_cmap
 
 lam = 1.5405974  # angstroms
 K = 2*np.pi/lam  # CuKalpha wavelength in angstroms
