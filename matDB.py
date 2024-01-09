@@ -1,4 +1,4 @@
-from brooks.functions import vegard
+from dataAnalysis.functions import vegard
 import numpy as np
 
     
