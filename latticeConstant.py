@@ -5,11 +5,11 @@ from uncertainties import ufloat
 from uncertainties.umath import sin, sqrt, tan, cos
 from scipy.optimize import least_squares
 from scipy import linalg
-from brooks.fileIO import getPanalyticalXRD, rigakuXRD, slacXRD
+from dataAnalysis.fileIO import getPanalyticalXRD, rigakuXRD, slacXRD
 from findpeaks import findpeaks
 from lmfit.models import VoigtModel
 import pandas as pd
-from brooks.plotter import plotXRD
+from dataAnalysis.plotter import plotXRD
 
 n0_ZGN = 1.659 #electrons per cubic angstrom
 n0_AlN = 0.9583
