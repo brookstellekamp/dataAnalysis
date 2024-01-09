@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 from scipy.stats import linregress
 import scipy.constants as c
 import pandas as pd
-from brooks.functions import normalize
+from dataAnalysis.functions import normalize
 
 '''
 PL data file definition:
