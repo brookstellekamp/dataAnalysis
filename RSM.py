@@ -1,8 +1,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from brooks.fileIO import getPanalyticalXRD
-from brooks.plotter import plotRC, FWHM
-from brooks.functions import singlePeakFit, gauss_fit_2d, gauss_tilt_fit_2d, lorentz_tilt_fit_2d, vegard
+from dataAnalysis.fileIO import getPanalyticalXRD
+from dataAnalysis.plotter import plotRC, FWHM
+from dataAnalysis.functions import singlePeakFit, gauss_fit_2d, gauss_tilt_fit_2d, lorentz_tilt_fit_2d, vegard
 import itertools
 import matplotlib.colors as colors
 from matplotlib import ticker
@@ -10,7 +10,7 @@ from scipy.interpolate import griddata
 from scipy.optimize import least_squares, root
 from scipy import linalg
 from uncertainties import ufloat
-from brooks.matDB import *
+from dataAnalysis.matDB import *
 from tol_colors import tol_cmap
 
 lam = 1.5405974  # angstroms
