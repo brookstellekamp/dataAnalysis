@@ -1,5 +1,5 @@
-from brooks.plotter import plotRC, plotXRD, FWHM
-from brooks.fileIO import rigakuXRD
+from dataAnalysis.plotter import plotRC, plotXRD, FWHM
+from dataAnalysis.fileIO import rigakuXRD
 import matplotlib.pyplot as plt
 import numpy as np
 import glob
