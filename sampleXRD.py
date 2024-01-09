@@ -1,7 +1,7 @@
-from brooks.latticeConstant import *
-from brooks.RSM import *
-from brooks.plotter import plotXRD, FWHM, plotRC, XRD_peak_fit, MidpointNormalize
-from brooks.fileIO import rigakuXRD
+from dataAnalysis.latticeConstant import *
+from dataAnalysis.RSM import *
+from dataAnalysis.plotter import plotXRD, FWHM, plotRC, XRD_peak_fit, MidpointNormalize
+from dataAnalysis.fileIO import rigakuXRD
 from os import chdir, listdir, walk
 import glob
 from dataclasses import dataclass
