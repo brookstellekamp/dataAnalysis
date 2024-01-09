@@ -946,7 +946,7 @@ class RSM:
             self.qx = (2*np.pi)/self.qx
             self.qz = (2*np.pi)/self.qz
 
-        plt.style.use('publication')
+        
         if fig == None:
             fig = self.RSM_fig
         if ax == None:
