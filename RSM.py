@@ -473,6 +473,7 @@ def calcQ(mat, h, k, l, norm=None, chi=0):
             resultant = 2*np.pi/d_tet(a, c, h, k, l)
             qx = resultant*np.sin(offset*np.pi/180)
             qz = resultant*np.cos(offset*np.pi/180)
+        
 
     elif sys == 'mono':
         a = mat['a']
