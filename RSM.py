@@ -452,13 +452,27 @@ def calcQ(mat, h, k, l, norm=None, chi=0):
 
         resultant = np.sqrt(qx**2+qz**2)
         offset = chiAngle_cubic(h, k, l, norm[0], norm[1], norm[2])
+    
     elif sys == 'tet':
         a = mat['a']
         c = mat['c']
-        d_hk = d_tet(a, c, h, k, 0)
-        d_l = d_tet(a, c, 0, 0, l)
-        qx = 2*np.pi/d_hk
-        qz = 2*np.pi/d_l
+        
+        if norm == (0,0,1):
+            if h == 0 and k == 0:
+                qx = 0
+            else:
+                d_hk = d_tet(a, c, h, k, 0)
+                qx = 2*np.pi/d_hk
+            if l == 0:
+                qz = 0
+            else:
+                d_l = d_tet(a, c, 0, 0, l)
+                qz = 2*np.pi/d_l
+        else:
+            offset = chiAngle_tet(a, c, h, k, l, norm[0], norm[1], norm[2])
+            resultant = 2*np.pi/d_tet(a, c, h, k, l)
+            qx = resultant*np.sin(offset*np.pi/180)
+            qz = resultant*np.cos(offset*np.pi/180)
 
     elif sys == 'mono':
         a = mat['a']
