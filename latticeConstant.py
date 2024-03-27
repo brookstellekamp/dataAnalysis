@@ -559,20 +559,58 @@ def fringeThicknessManual(peakList, lam=1.54059):
         
     return [lam/(2*(np.sin(peakRad[a])-np.sin(peakRad[a-1]))) for a in np.arange(1,len(peakList),1)]
 
-def fringeThickness(dat, source=None, delimiter = ',', lam=1.54059, w=4, fitpeaks=False, plotFit=False, plot = False):
+def fringeThickness(dat, source=None, delimiter = ',', lam=1.54059, w=4, fitpeaks=False, plotFit=False, plot = False, lookahead=5):
+    """
+    Calculate the thickness of a thin film from X-ray diffraction data.
+
+    Args:
+        dat (str or array): Input data. If `source` is not provided, this should be a filepath 
+                            to the data file. If `source` is provided, it should be an array 
+                            containing X-ray diffraction data.
+        source (str, optional): Source of the data. If provided, it should be one of the 
+                                supported formats: 'ras', 'xrdml', 'data', 'slac', 'txt'. 
+                                If not provided, the function will attempt to determine the 
+                                source from the file extension.
+        delimiter (str, optional): Delimiter used in the data file if `source` is 'txt'. 
+                                   Default is ','.
+        lam (float, optional): Wavelength of the X-rays used for the diffraction. 
+                                Default is 1.54059 Å (copper Kα1 radiation).
+        w (int, optional): Number of peaks on each side of the film peak to consider 
+                           for calculating fringe thickness. Default is 4.
+        fitpeaks (bool, optional): Whether to fit peaks using a Voigt model to determine 
+                                    precise peak positions. Default is False.
+        plotFit (bool, optional): Whether to plot the fits if fitting peaks. Default is False.
+        plot (bool, optional): Whether to plot the X-ray diffraction data with the calculated 
+                                fringe positions. Default is False.
+        lookahead (int, optional): Number of points to look ahead for peak finding. 
+                                    Default is 5.
+
+    Returns:
+        tuple: A tuple containing:
+            - `values` (array): Fringe positions.
+            - `avg_thickness` (float): Average thickness of the film in Å.
+            - `std_thickness` (float): Standard deviation of the thickness measurements in Å.
+    """
     
     #Note. For AlGaO on GaO (010) the composition is 0.4727*peak sub separation in omega
-    
+
+    # Supported file formats for XRD data
     supportedFormats = ['ras', 'xrdml', 'data', 'slac', 'txt']
     
+    # Determine source if not provided based on file extension
     if source == None:
         source = dat.split('.')[-1]
+    # Translate legacy source names to supported formats
     elif source == 'rigaku':
         source = 'ras'
     elif source == 'panalytical':
         source = 'xrdml'
+    
+    # Check if the provided source is supported
     if source not in supportedFormats:
         raise ValueError('Unsupported Format')
+    
+    # Load data based on the source format
     if source == 'ras':
         data = rigakuXRD(dat)
         x = data[:,0]
@@ -592,22 +630,29 @@ def fringeThickness(dat, source=None, delimiter = ',', lam=1.54059, w=4, fitpeak
         data = np.genfromtxt(dat, delimiter=delimiter)
         x = data[:,0]
         y = data[:,1]
+
+    # Ensure no zero values in y data
     minData = y[y>0].min()
-    y[y==0]=minData
+    y[y==0] = minData
     
-    fp = findpeaks(lookahead=5)
+    # Find peaks in the data
+    fp = findpeaks(lookahead=lookahead)
     result = fp.fit(y)
     
+    # Separate peaks and valleys
     df = result['df'][result['df']['peak']==True]
     valley = result['df'][result['df']['valley']==True]
     peakValley = pd.concat((df, valley)).sort_index()
     
+    # Identify substrate and film peaks
     subIDX = df.idxmax()['y']
     df_noSub = df.drop(axis=0, index=subIDX)
     filmIDX = df_noSub.idxmax()['y']
     idx = df_noSub.index.values
     filmIDX_num = np.argwhere(idx==filmIDX)[0][0]
     fringeIDX = np.concatenate((idx[filmIDX_num-w:filmIDX_num], idx[filmIDX_num+1:filmIDX_num+w+1]))
+    
+    # Fit peaks if required and determine fringe positions
     if fitpeaks:
         x_fringe = []
         for peak in fringeIDX:
@@ -624,6 +669,8 @@ def fringeThickness(dat, source=None, delimiter = ',', lam=1.54059, w=4, fitpeak
         x_fringe = np.array(x_fringe)
     else:
         x_fringe = x[fringeIDX]
+    
+    # Calculate thickness
     left = x_fringe[:w]
     right = x_fringe[w:]
     left_r = left*np.pi/360
@@ -631,9 +678,11 @@ def fringeThickness(dat, source=None, delimiter = ',', lam=1.54059, w=4, fitpeak
     left_thickness = [lam/(2*(np.sin(left_r[a])-np.sin(left_r[a-1]))) for a in np.arange(1,w,1)]
     right_thickness = [lam/(2*(np.sin(right_r[a])-np.sin(right_r[a-1]))) for a in np.arange(1,w,1)]
     
+    # Combine left and right thicknesses and positions
     values = np.concatenate((left, right))
     thickness = np.concatenate((left_thickness, right_thickness))
     
+    # Print results
     print('\nSubstrate peak: {0:0.4f} \u00B02\u03B8-\u03C9'.format(x[subIDX]))
     print('Layer peak: {0:0.4f} \u00B02\u03B8-\u03C9'.format(x[filmIDX]))
     print('peak layer separation: {0:0.4f} \u00B02\u03C9'.format((x[subIDX]-x[filmIDX])/2))
@@ -645,6 +694,7 @@ def fringeThickness(dat, source=None, delimiter = ',', lam=1.54059, w=4, fitpeak
     for a in np.arange(1,w,1):
         print('{0:0.4f} - {1:0.4f}\t\t{2:0.4f}\t{3:0.2f}'.format(right[a], right[a-1], right[a]-right[a-1], right_thickness[a-1]))
     
+    # Plot if required
     if plot:
         fig, ax = plotXRD(dat)
         y_0 = y[np.searchsorted(x, values)]
